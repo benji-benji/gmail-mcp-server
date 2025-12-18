@@ -1,14 +1,14 @@
 # gmail-mcp-server
 
 # pre-requisities
+- google workspace account (with gmail enabled)
 - Python 3.12
 - uv (install via https://github.com/astral-sh/uv)
-- google workspace account 
 
 # security 
-- this repo does not contain any Google credentials or tokens 
+This repo does not contain any Google credentials or tokens. 
 
-local only files (ignored by git)
+Local only files (ignored by git)
 - credentials.json OAuth client secret downloaded from Google Cloud
 - token.json generated locally when authenticating for the first time
 
@@ -23,3 +23,4 @@ Make sure you do not commit these files.
 6. Scopes used:
    - gmail.readonly
    - gmail.compose
+
