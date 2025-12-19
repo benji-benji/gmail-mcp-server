@@ -12,7 +12,10 @@ from googleapiclient.errors import HttpError
 '''
 
 # define scopes ( if modifying scopes, delete the file token.json )
-SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+SCOPES = [
+  "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/gmail.compose",
+]
 
 def get_credentials(
     scopes,

@@ -100,3 +100,21 @@ def normalise_message(message: Dict) -> Dict:
         "rfc_message_id": message_id,
     }
     
+def list_unread_emails(service, max_results: int = 10) -> List[Dict]:
+    """
+    Lists unread emails, normalises them, and returns as a list of dicts.
+    """
+    message_refs = list_unread_message_ids(service, max_results=max_results)
+    emails = []
+
+    for ref in message_refs:
+        msg_id = ref.get("id")
+        if not msg_id:
+            continue
+
+        raw_message = get_message_metadata(service, msg_id)
+        normalised = normalise_message(raw_message)
+        emails.append(normalised)
+
+    return emails
+
