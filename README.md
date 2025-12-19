@@ -128,5 +128,4 @@ If I had more time, I'd add:
 - Style guide + templates (Google Doc / Notion / local markdown)
 - Better recipient handling (Reply-To, multiple recipients)
 - Nicer reply formatting / quoting original message
-- Docker + one-command setup for reviewers
-- GitHub Actions CI to run tests on push
+- Support for multiple senders / "reply all"
