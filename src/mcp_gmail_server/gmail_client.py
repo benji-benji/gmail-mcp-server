@@ -67,3 +67,36 @@ def get_message_metadata(service, message_id: str) -> Dict:
         .execute()
     )
     return message
+
+def info_to_dict(headers_list: List[Dict[str, str]]) -> Dict[str, str]:
+    """
+    Converts a list of header dicts to a single dict.
+    """
+    return {header["name"]: header["value"] for header in headers_list}
+
+def normalise_message(message: Dict) -> Dict:
+    """
+    Normalises a raw Gmail message into our schema.
+    """
+    payload = message.get("payload", {})
+    headers_list = payload.get("headers", [])
+    header_dict = info_to_dict(headers_list)    
+    
+    
+    from_ = header_dict.get("From", "")
+    subject = header_dict.get("Subject", "")
+    date = header_dict.get("Date", "")
+    message_id = header_dict.get("Message-ID", "")
+
+    snippet = message.get("snippet", "")
+
+    return {
+        "message_id": message.get("id", ""),
+        "thread_id": message.get("threadId", ""),
+        "from_": from_,
+        "subject": subject,
+        "date": date,
+        "snippet": snippet,
+        "rfc_message_id": message_id,
+    }
+    
