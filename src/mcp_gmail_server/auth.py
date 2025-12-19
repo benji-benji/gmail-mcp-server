@@ -34,7 +34,4 @@ def get_credentials(
         with open(token_path, "w") as token:
             token.write(creds.to_json())
     
-        except HttpError as error:
-        print(f"An error occurred: {error}")
-    
     return creds
