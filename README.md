@@ -105,6 +105,8 @@ uv run python -m mcp_gmail_server.server
 
 My Claude config uses the full uv path plus `--directory` so Claude starts the server from the repo root reliably.
 
+![Claude desktop config](assets/claude%20desktop%20config%20-%20gmail%20mcp%20server.png)
+
 **Note:** After editing config, quit Claude fully (Cmd+Q) and reopen.
 
 ## Example Prompts
