@@ -27,9 +27,12 @@ Make sure you do not commit these files.
 
 PSEUDOCODE: 
 
-gmail_client.py : 
+gmail_client.py
+
+
 - authenticate user via OAuth 
-- store token locally 
+- check for token / create & store token locally 
+- define what email labels to use: INBOX, UNREAD not TRASH, SPAM, PROMOTIONS, SOCIAL 
 - define what info to extract from emails: From, Subject, Date, Body, Message-Id 
 - define user parameters ( eg. max results) 
 - list_message_refs - get the message IDs
