@@ -6,6 +6,31 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+''' 
+// Module to interact with Gmail API // 
+
+Purpose: 
+1. Gets unread emails and extracts relevant info.
+2. Handles emails: Find, Fetch, Parse, Normalise, Return list of dicts.
+3. Create draft reply + threading.
+
+PSEUDOCODE / PLAN: 
+- authenticate user via OAuth 
+- check for token / create & store token locally 
+- define what email labels to use: INBOX, UNREAD not TRASH, SPAM, PROMOTIONS, SOCIAL 
+- define what info to extract from emails: From, Subject, Date, Body, Message-Id 
+- define user parameters ( eg. max results) 
+- list_message_refs - get the message IDs
+- get_message_metadata - get the info from one message 
+- info_to_dict - convert the info to a dictionary 
+- create_snippet - build object {snippet}
+- normalise_message - build object {from , subject, date, snippet, message-id}
+# Do I need Thread ID? 
+- list_unread_emails - get the unread emails, normalise them, return as list of dicts
+# to add: create_draft_reply + threading 
+
+'''
+
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 
