@@ -1,45 +1,130 @@
 # gmail-mcp-server
 
-# pre-requisities
-- google workspace account (with gmail enabled)
-- Python 3.12
-- uv (install via https://github.com/astral-sh/uv)
+A small MCP server that connects **Claude Desktop** to **Gmail** so Claude can:
 
-# security 
-This repo does not contain any Google credentials or tokens. 
+- read unread emails from Inbox (excluding spam/promotions/social/trash)
+- create *threaded* draft replies (and update an existing draft if you pass `draft_id`)
 
-Local only files (ignored by git)
-- credentials.json OAuth client secret downloaded from Google Cloud
-- token.json generated locally when authenticating for the first time
+---
 
-Make sure you do not commit these files. 
+## What it does
 
-# google Oauth setup (gmail API)
-1. Create a Google Cloud project (https://console.cloud.google.com/).
-2. Enable the gmail API for your project 
-3. Configure OAuth consent screen 
-4. Create OAuth Client ID (Desktop App recommended for local dev)
-5. Download the client JSON and save it as `credentials.json` in the project root directory.
-6. Scopes used:
-   - gmail.readonly
-   - gmail.compose
+### Tool 1: `get_unread_emails(max_results=5)`
 
+Returns unread inbox emails with:
 
-PSEUDOCODE: 
+- `from_`, `subject`, `snippet`
+- `message_id`, `thread_id`, `rfc_message_id`
 
-gmail_client.py
+Claude calling the tool:
 
+![Claude tool request](assets/I'll%20check%20unread%20emails%201%20-%20claude.png)
 
-- authenticate user via OAuth 
-- check for token / create & store token locally 
-- define what email labels to use: INBOX, UNREAD not TRASH, SPAM, PROMOTIONS, SOCIAL 
-- define what info to extract from emails: From, Subject, Date, Body, Message-Id 
-- define user parameters ( eg. max results) 
-- list_message_refs - get the message IDs
-- get_message_metadata - get the info from one message 
-- info_to_dict - convert the info to a dictionary 
-- create_snippet - build object {snippet}
-- normalise_message - build object {from , subject, date, snippet, message-id}
-# Do I need Thread ID? 
-- list_unread_emails - get the unread emails, normalise them, return as list of dicts
-# to add: create_draft_reply + threading 
+Example output:
+
+![Claude tool output](assets/I'll%20check%20unread%20emails%202%20-%20claude.png)
+
+---
+
+### Tool 2: `create_draft_reply(...)`
+
+Creates a Gmail draft reply in the correct thread.
+
+If you pass `draft_id`, it **updates** the existing draft instead of creating multiple drafts in the same thread.
+
+Claude calling `create_draft_reply`:
+
+![Claude create_draft_reply](assets/do%20it%20again%20%20tfl%20-%20claude.png)
+
+Claude creating drafts for multiple emails:
+
+![Claude create drafts](assets/I'll%20create%20draft%20replies%20-%20claude.png)
+
+Drafts showing up in Gmail:
+
+![Gmail Hackney Empire draft](assets/hackney%20empire%20-%20gmail.png)
+
+![Gmail Hetzner draft](assets/hetzner%20reply%20-%20gmail.png)
+
+![Gmail TfL draft](assets/transport%20for%20london%20reply%20-%20gmail.png)
+
+---
+
+## Prerequisites
+
+- Python 3.12+
+- `uv`
+- Claude Desktop
+- Gmail account
+
+---
+
+## Security
+
+This repo does **not** include secrets.
+
+Local-only (gitignored):
+
+- `credentials.json` (downloaded from Google Cloud)
+- `token.json` (generated locally after first auth)
+
+---
+
+## Google OAuth (Gmail API) setup
+
+1. Create Google Cloud project
+2. Enable **Gmail API**
+3. Create OAuth Client ID (**Desktop app**)
+4. Download client JSON → save as `credentials.json` in repo root
+5. Scopes used:
+   - `https://www.googleapis.com/auth/gmail.readonly`
+   - `https://www.googleapis.com/auth/gmail.compose`
+
+## First Auth
+
+Generates `token.json`:
+```bash
+uv run python scripts/smoke_read.py
+```
+
+## Install + Run
+
+### Install Dependencies
+```bash
+uv sync
+```
+
+### Run Server Manually
+
+Useful for debugging:
+```bash
+uv run python -m mcp_gmail_server.server
+```
+
+## Claude Desktop Config
+
+My Claude config uses the full uv path plus `--directory` so Claude starts the server from the repo root reliably.
+
+**Note:** After editing config, quit Claude fully (Cmd+Q) and reopen.
+
+## Example Prompts
+
+- "Call get_unread_emails with max_results=3 and show sender + subject."
+- "Using the first email, call create_draft_reply with a polite reply body and return draft_id."
+- "Revise the draft to be shorter and warmer (pass the same draft_id to update it)."
+
+## Tests
+```bash
+uv run pytest -q
+```
+
+## Next Steps / Stretch Goals
+
+If I had more time, I'd add:
+
+- Simple importance scoring / prioritisation for unread emails
+- Style guide + templates (Google Doc / Notion / local markdown)
+- Better recipient handling (Reply-To, multiple recipients)
+- Nicer reply formatting / quoting original message
+- Docker + one-command setup for reviewers
+- GitHub Actions CI to run tests on push
