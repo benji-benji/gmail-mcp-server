@@ -36,7 +36,8 @@ PSEUDOCODE / PLAN:
 # exclude TRASH, SPAM, PROMOTIONS, SOCIAL
 
 EXCLUDE_LABELS = "-in:spam -category:promotions -category:social -in:trash"
-
+REQUIRED_LABELS = ["INBOX", "UNREAD"]
+METADATA_HEADERS = ["From", "Subject", "Date", "Message-ID"]
 
 def list_unread_message_ids(service, max_results: int = 10) -> List[Dict[str, str]]:
     """
@@ -47,10 +48,22 @@ def list_unread_message_ids(service, max_results: int = 10) -> List[Dict[str, st
         .messages()
         .list(
             userId="me",
-            labelIds=["INBOX", "UNREAD"],
+            labelIds=REQUIRED_LABELS,
             q=EXCLUDE_LABELS,
             maxResults=max_results,
         )
         .execute()
     )
     return resp.get("messages", [])
+
+def get_message_metadata(service, message_id: str) -> Dict:
+    """
+    Fetches metadata for a single message by ID.
+    """
+    message = (
+        service.users()
+        .messages()
+        .get(userId="me", id=message_id, format="metadata", metadataHeaders=METADATA_HEADERS)
+        .execute()
+    )
+    return message

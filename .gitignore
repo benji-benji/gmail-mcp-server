@@ -1,2 +1,8 @@
 credentials.json
 token.json
+# packaging/build artifacts
+*.egg-info/
+dist/
+build/
+__pycache__/
+.pytest_cache/
